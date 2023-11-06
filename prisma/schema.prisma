@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ChallengeResult {
+  id          String   @id @default(uuid())
+  challengeId String
+  userId      Int
+  passedTests Int
+  totalTests  Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Challenge {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  testCases   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String       @unique
+  password    String
+  role        String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  courses     Course[]
+  enrollments Enrollment[]
+  progress    Progress[]
+}
+
+model Course {
+  id           Int          @id @default(autoincrement())
+  title        String
+  description  String
+  published    Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  instructorId Int
+  lessons      Lesson[]
+  enrollments  Enrollment[]
+  Instructor   User         @relation(fields: [instructorId], references: [id])
+}
+
+model Lesson {
+  id        Int        @id @default(autoincrement())
+  title     String
+  content   String
+  courseId  Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Course    Course     @relation(fields: [courseId], references: [id])
+  Progress  Progress[]
+}
+
+model Enrollment {
+  id             Int      @id @default(autoincrement())
+  courseId       Int
+  userId         Int
+  enrollmentDate DateTime @default(now())
+  progress       Int      @default(0) // Percentage of course completion
+  Course         Course   @relation(fields: [courseId], references: [id])
+  User           User     @relation(fields: [userId], references: [id])
+}
+
+model Progress {
+  id             Int       @id @default(autoincrement())
+  userId         Int
+  lessonId       Int
+  completed      Boolean   @default(false)
+  completionDate DateTime?
+  Lesson         Lesson    @relation(fields: [lessonId], references: [id])
+  User           User      @relation(fields: [userId], references: [id])
+}
