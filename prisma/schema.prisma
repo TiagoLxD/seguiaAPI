@@ -30,17 +30,16 @@ model Challenge {
 }
 
 model User {
-  id          Int          @id @default(autoincrement())
-  firstName   String
-  lastName    String
-  email       String       @unique
-  password    String
-  role        String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  courses     Course[]
-  enrollments Enrollment[]
-  progress    Progress[]
+  id           Int          @id @default(autoincrement())
+  completeName String
+  email        String       @unique
+  password     String
+  role         String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  courses      Course[]
+  enrollments  Enrollment[]
+  progress     Progress[]
 }
 
 model Course {

@@ -1,8 +1,7 @@
 import prisma from "@/configs/prismaCliente";
 
 type CreateUser = {
-	firstName: string;
-	lastName: string;
+	completeName: string;
 	email: string;
 	hash: string;
 };
@@ -12,12 +11,11 @@ class UsuarioRepository {
 		const user = await prisma.user.findUnique({ where: { email: email } });
 		return user;
 	}
-	async createUser({ firstName, lastName, email, hash }: CreateUser) {
+	async createUser({ completeName, email, hash }: CreateUser) {
 		try {
 			const user = await prisma.user.create({
 				data: {
-					firstName,
-					lastName,
+					completeName,
 					email,
 					password: hash,
 					role: "STUDENT",
@@ -25,7 +23,7 @@ class UsuarioRepository {
 			});
 			return {
 				id: user.id,
-				firstName: user.firstName,
+				firstName: user.completeName,
 				email: user.email,
 			};
 		} catch (error) {

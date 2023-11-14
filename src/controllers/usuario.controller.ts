@@ -6,8 +6,7 @@ import jwt from "jsonwebtoken";
 import { z } from "zod";
 
 const UserSchema = z.object({
-	firstName: z.string().min(1, { message: "O primeiro nome não pode estar vazio." }),
-	lastName: z.string().min(1, { message: "O sobrenome não pode estar vazio." }),
+	completeName: z.string().min(3, { message: "O Nome completo não pode estar vazio." }),
 	email: z.string().email({ message: "O e-mail fornecido não é válido." }),
 	password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres." }),
 });
@@ -20,9 +19,9 @@ class UsuarioController {
 				return res.status(400).json(parsedData.error.format());
 			}
 
-			const { firstName, lastName, email, password } = req.body;
+			const { completeName, email, password } = req.body;
 
-			if (!email || !password || !firstName || !lastName) {
+			if (!email || !password || !completeName) {
 				return res.status(400).json({ error: "Todos os campos são obrigatórios." });
 			}
 
@@ -35,8 +34,7 @@ class UsuarioController {
 			const hashedPassword = await bcrypt.hash(password, 10);
 
 			const newUser = {
-				firstName,
-				lastName,
+				completeName,
 				email,
 				hash: hashedPassword,
 			};
@@ -68,7 +66,7 @@ class UsuarioController {
 			const token = jwt.sign(
 				{
 					clienteId: existingUser.id,
-					cliente: existingUser.firstName,
+					cliente: existingUser.completeName,
 					email: existingUser.email,
 				},
 				env.jwtSecret,

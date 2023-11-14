@@ -8,6 +8,6 @@ const routes = Router();
 routes.post("/run", runnerScriptController.run);
 
 routes.post("/cadastro", usuarioController.cadastro);
-routes.get("/login", usuarioController.login);
+routes.post("/login", usuarioController.login);
 
 export default routes;
