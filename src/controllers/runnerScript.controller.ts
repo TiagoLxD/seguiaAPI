@@ -9,14 +9,13 @@ const execAsync = promisify(exec);
 
 function parseInput(input) {
 	const tokens = input
-		.split(/\s+/) // Divide por espaços e/ou quebras de linha
+		.split(/\s+/)
 		.map((token) => token.trim())
-		.filter((token) => token !== ""); // Remove tokens vazios
-
+		.filter((token) => token !== "");
 	return tokens;
 }
 
-async function runJavaScriptTests(code, testCases) {
+export async function runJavaScriptTests(code, testCases) {
 	const vm = new NodeVM({
 		timeout: 2000,
 		console: "redirect",
@@ -61,7 +60,7 @@ async function runJavaScriptTests(code, testCases) {
 	return results;
 }
 
-async function runBenchmark(fn: any) {
+export async function runBenchmark(fn: any) {
 	return new Promise((resolve) => {
 		const suite = new Benchmark.Suite();
 
@@ -125,9 +124,10 @@ class RunnerScript {
 					const results = await runJavaScriptTests(code, testCases);
 					return res.status(200).json(results);
 				} catch (err) {
+					const error = err as Error;
 					return res.status(500).json({
-						error: err.message,
-						stack: err.stack,
+						error: error.message,
+						stack: error.stack,
 					});
 				}
 			case "python":

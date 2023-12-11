@@ -5,7 +5,7 @@ import { env } from "@/configs/env";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 
-const UserSchema = z.object({
+const registerSchema = z.object({
 	completeName: z.string().min(3, { message: "O Nome completo não pode estar vazio." }),
 	email: z.string().email({ message: "O e-mail fornecido não é válido." }),
 	password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres." }),
@@ -14,9 +14,9 @@ const UserSchema = z.object({
 class UsuarioController {
 	async cadastro(req: Request, res: Response) {
 		try {
-			const parsedData = UserSchema.safeParse(req.body);
+			const parsedData = registerSchema.safeParse(req.body);
 			if (!parsedData.success) {
-				return res.status(400).json(parsedData.error.format());
+				return res.status(400).json(parsedData);
 			}
 
 			const { completeName, email, password } = req.body;
@@ -42,12 +42,12 @@ class UsuarioController {
 			await usuarioRepository.createUser(newUser);
 
 			return res.json({ message: "Usuário criado com sucesso." });
-		} catch (error: any) {
-			return res.status(500).json({ error: error.message });
+		} catch (error: unknown) {
+			return res.status(500).json({ error: (error as Error).message });
 		}
 	}
 
-	async login(req: Request, res: Response): Promise<any> {
+	async login(req: Request, res: Response) {
 		const { email, password } = req.body;
 
 		try {
@@ -74,10 +74,14 @@ class UsuarioController {
 			);
 
 			return res.json({ token: token.toString() });
-		} catch (error: any) {
+		} catch (error) {
 			return res.json({ error: error.message });
 		}
 	}
 }
+export type LoginType = {
+	token: string;
+	error: string;
+};
 
 export default new UsuarioController();
