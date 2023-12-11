@@ -5,12 +5,13 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"start": "tsx src/server.ts",
+		"start": "node src/server.js",
 		"dev": "tsx watch src/server.ts",
 		"clean": "rimraf dist",
 		"migrate": "npx prisma migrate dev --name",
 		"test": "vitest",
-		"build": "rimraf dist && tsc -p tsconfig-build.json"
+		"build": "rimraf dist && tsc -p tsconfig-build.json",
+		"deploy": "npm i && npm run build && npx prisma migrate deploy"
 	},
 	"keywords": [],
 	"author": "",
